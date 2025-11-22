@@ -9,10 +9,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
-  <!-- Favicon Placeholder (Menggunakan salah satu icon Anda) -->
+  <!-- Favicon Placeholder -->
   <link rel="icon" href="https://i.postimg.cc/43JHzVW8/329314-3ae915ca4c2cedce83b1b12a7addfd9d-22-11-2022-19-45-25.jpg" />
   
-  <!-- PWA Manifest Placeholder (Generated dynamically in Script for single-file portability) -->
+  <!-- PWA Manifest Placeholder -->
   <link rel="manifest" id="my-manifest-placeholder">
 
   <style>
@@ -32,26 +32,16 @@
     html {scroll-behavior: smooth;}
     body{margin:0; background:var(--bg); color:#1f2937; line-height:1.5;}
     
-    /* Layout & Container */
-    .container{
-      max-width:var(--max);
-      margin:0 auto;
-      padding: 16px;
-      padding-bottom: 80px; /* Space for footer/install button */
-    }
-
-    /* Header & Nav */
+    /* === HEADER (Full Width) === */
     header {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(10px);
       position: sticky;
       top: 0;
       z-index: 999;
-      padding: 12px 0;
-      margin: -16px -16px 16px -16px; /* Bleed to edges */
-      padding-left: 16px; padding-right: 16px;
       border-bottom: 1px solid #e5e7eb;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      width: 100%;
     }
     
     .header-inner {
@@ -61,11 +51,12 @@
       gap: 12px;
       max-width: var(--max);
       margin: 0 auto;
+      padding: 12px 16px; /* Internal padding */
     }
 
     .brand{display:flex; align-items:center; gap:12px; text-decoration: none; color: inherit;}
     .logo{
-      width:48px; height:48px; 
+      width:42px; height:42px; 
       border-radius:10px; 
       background:linear-gradient(135deg, var(--accent), #2b8f6b);
       display:flex; align-items:center; justify-content:center; 
@@ -75,34 +66,34 @@
     .logo img {width: 100%; height: 100%; object-fit: cover;}
     
     .brand-text h1 {font-size: 18px; font-weight: 800; margin: 0; line-height: 1.2;}
-    .brand-text span {font-size: 12px; color: var(--muted);}
+    .brand-text span {font-size: 11px; color: var(--muted); display: block;}
 
-    /* Scrollable Nav for Mobile */
+    /* Navigasi Responsif */
     nav {
       display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      white-space: nowrap;
-      padding: 8px 0;
-      margin-top: 8px;
-      scrollbar-width: none; /* Firefox */
+      gap: 4px;
     }
-    nav::-webkit-scrollbar {display: none;}
     nav a {
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 8px 14px;
+      border-radius: 8px;
       text-decoration: none;
       color: var(--muted);
       font-weight: 600;
       font-size: 14px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
       transition: all 0.2s;
     }
-    nav a.active, nav a:hover {
+    nav a:hover {background: #f3f4f6; color: #111;}
+    nav a.active {
       background: var(--accent);
       color: white;
-      border-color: var(--accent);
+    }
+
+    /* === Layout & Container === */
+    .container{
+      max-width:var(--max);
+      margin:0 auto;
+      padding: 16px;
+      padding-bottom: 80px;
     }
 
     /* Grid Layout */
@@ -252,7 +243,7 @@
       to {transform: translate(-50%, 0); opacity: 1;}
     }
 
-    /* Share Button (Web Share API) */
+    /* Share Button */
     .native-share-btn {
       display: inline-flex;
       align-items: center;
@@ -267,44 +258,77 @@
       cursor: pointer;
     }
 
-    /* Responsive */
+    /* === Responsive Breakpoints === */
     @media (max-width: 900px){
       .layout {grid-template-columns: 1fr;}
       .sidebar {order: 2;}
       .hero {grid-template-columns: 1fr;}
-      .header-inner {flex-direction: column; align-items: stretch;}
-      .brand {justify-content: center;}
+      
+      /* Header Mobile Adjustment */
+      .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+        padding-bottom: 0; /* Hemat space bawah */
+      }
+      
+      .brand {
+        justify-content: flex-start; /* Logo kiri */
+        padding-bottom: 12px;
+      }
+
+      /* Navigasi Scroll Horizontal di Mobile */
+      nav {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 12px; /* Space untuk scrollbar ghost */
+        margin-left: -16px; /* Bleed kiri */
+        width: calc(100% + 32px); /* Bleed kanan */
+        padding-left: 16px;
+        padding-right: 16px;
+        
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      nav::-webkit-scrollbar {display: none;}
+      
+      nav a {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  
-  <!-- Header -->
-  <header>
-    <div class="header-inner">
-      <a href="#" class="brand">
-        <div class="logo">
-          <img src="https://i.postimg.cc/43JHzVW8/329314-3ae915ca4c2cedce83b1b12a7addfd9d-22-11-2022-19-45-25.jpg" alt="Logo">
-        </div>
-        <div class="brand-text">
-          <h1>Republik Mancing</h1>
-          <span>Liputan • Event • Tips • Video</span>
-        </div>
-      </a>
-      
-      <nav>
-        <a href="#home" class="active">Home</a>
-        <a href="#event">Event</a>
-        <a href="#jadwal">Jadwal</a>
-        <a href="#koleksi">Koleksi</a>
-        <a href="#channel">Video</a>
-        <a href="#tentang">Tentang</a>
-      </nav>
-    </div>
-  </header>
+<!-- Header dipindahkan keluar Container agar Full Width -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="brand">
+      <div class="logo">
+        <img src="https://i.postimg.cc/43JHzVW8/329314-3ae915ca4c2cedce83b1b12a7addfd9d-22-11-2022-19-45-25.jpg" alt="Logo">
+      </div>
+      <div class="brand-text">
+        <h1>Republik Mancing</h1>
+        <span>Liputan • Event • Tips • Video</span>
+      </div>
+    </a>
+    
+    <nav>
+      <a href="#home" class="active">Home</a>
+      <a href="#event">Event</a>
+      <a href="#jadwal">Jadwal</a>
+      <a href="#koleksi">Koleksi</a>
+      <a href="#channel">Video</a>
+      <a href="#tentang">Tentang</a>
+    </nav>
+  </div>
+</header>
 
+<div class="container">
   <div class="layout">
     <!-- Main Content -->
     <main>
@@ -445,9 +469,10 @@
         
         <!-- Socials -->
         <div class="card" style="display:flex; justify-content:center; gap:16px;">
-          <a href="#"><img src="https://i.postimg.cc/MGTBvbc9/1.png" width="32"></a>
-          <a href="#"><img src="https://i.postimg.cc/6qs4jkMH/2.png" width="32"></a>
-          <a href="#"><img src="https://i.postimg.cc/LXZF4wmd/7.png" width="32"></a>
+          <a href="https://www.facebook.com/robben.bralink" target="_blank" title="Facebook"><img src="https://i.postimg.cc/MGTBvbc9/1.png" width="32" alt="Facebook"></a>
+          <a href="https://www.instagram.com/republikmancing37/" target="_blank" title="Instagram"><img src="https://i.postimg.cc/6qs4jkMH/2.png" width="32" alt="Instagram"></a>
+          <a href="https://www.youtube.com/c/RepublikMancing37" target="_blank" title="YouTube"><img src="https://i.postimg.cc/LXZF4wmd/7.png" width="32" alt="YouTube"></a>
+          <a href="https://www.tiktok.com/@republikmancing?lang=id-ID" target="_blank" title="TikTok"><img src="https://i.postimg.cc/02sJpqMr/3.png" width="32" alt="TikTok"></a>
         </div>
 
       </div>
