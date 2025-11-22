@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <!-- Viewport: viewport-fit=cover penting untuk mengatasi Notch/Poni HP -->
+  <!-- Viewport adjustment for Notch/PWA -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   
   <title>Republik Mancing — Liputan & Event Mancing</title>
@@ -11,10 +11,10 @@
   
   <!-- iOS Support -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Republik Mancing">
   
-  <!-- Icons -->
+  <!-- Placeholder Icons & Manifest -->
   <link rel="icon" href="https://i.postimg.cc/43JHzVW8/329314-3ae915ca4c2cedce83b1b12a7addfd9d-22-11-2022-19-45-25.jpg" />
   <link rel="manifest" id="my-manifest-placeholder">
 
@@ -27,41 +27,28 @@
       --bg: #f3f4f6;
       --max: 1100px;
       --radius: 12px;
-      --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       
-      /* Safe Area Variables */
-      --sat: env(safe-area-inset-top, 0px);
-      --sar: env(safe-area-inset-right, 0px);
-      --sal: env(safe-area-inset-left, 0px);
+      /* Safe Area Variables for PWA */
+      --sat: env(safe-area-inset-top);
+      --sar: env(safe-area-inset-right);
+      --sal: env(safe-area-inset-left);
     }
     
-    /* === GLOBAL RESET === */
-    *, *::before, *::after {box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-    
-    html {
-      scroll-behavior: smooth;
-      width: 100%;
-      overflow-x: hidden;
-    }
-    
+    /* Reset & Base */
+    *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+    html {scroll-behavior: smooth; overflow-x: hidden;}
     body{
       margin:0; 
       background:var(--bg); 
       color:#1f2937; 
       line-height:1.5; 
       min-height: 100vh;
-      width: 100%;
-      overflow-x: hidden;
-    }
-
-    img, iframe, video {
-      max-width: 100%;
-      height: auto;
-      display: block;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
     
-    /* === HEADER === */
+    /* === HEADER (Fixed 100% Width & Safe Area) === */
     header {
       background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(10px);
@@ -70,11 +57,13 @@
       top: 0;
       z-index: 1000;
       border-bottom: 1px solid #e5e7eb;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
       width: 100%;
       
-      /* Padding Top Aman untuk Poni HP */
-      padding-top: max(12px, var(--sat));
-      padding-bottom: 0;
+      /* PENTING: Padding Top untuk Notch/Status Bar PWA */
+      padding-top: var(--sat); 
+      padding-left: var(--sal);
+      padding-right: var(--sar);
     }
     
     .header-inner {
@@ -84,12 +73,12 @@
       gap: 16px;
       max-width: var(--max);
       margin: 0 auto;
-      padding: 8px 16px 12px 16px; /* Padding standard */
-      width: 100%;
+      padding: 12px 16px;
+      width: 100%; /* Ensure fills header */
     }
 
-    /* Brand */
-    .brand{display:flex; align-items:center; gap:12px; text-decoration: none; color: inherit; min-width: 0;}
+    /* Brand / Logo */
+    .brand{display:flex; align-items:center; gap:12px; text-decoration: none; color: inherit; max-width: 100%;}
     .logo{
       width:40px; height:40px; 
       border-radius:10px; 
@@ -100,10 +89,16 @@
     }
     .logo img {width: 100%; height: 100%; object-fit: cover;}
     
-    .brand-text {flex: 1; min-width: 0;}
+    .brand-text {flex: 1; min-width: 0;} /* Allow shrinking */
     .brand-text h1 {
-      font-size: 18px; font-weight: 800; margin: 0; line-height: 1.2;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size: 18px; 
+      font-weight: 800; 
+      margin: 0; 
+      line-height: 1.2; 
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .brand-text span {font-size: 11px; color: var(--muted); display: block; font-weight: 500;}
 
@@ -122,13 +117,14 @@
     nav a:hover {background: #f3f4f6; color: #111;}
     nav a.active {background: var(--accent); color: white;}
 
-    /* === LAYOUT === */
+    /* === Layout & Content === */
     .container{
       max-width:var(--max);
       margin:0 auto;
-      padding: 20px 16px;
-      padding-bottom: 100px;
-      width: 100%;
+      padding: 24px 16px;
+      padding-bottom: 80px; /* Space footer */
+      padding-left: calc(16px + var(--sal));
+      padding-right: calc(16px + var(--sar));
     }
 
     .layout{
@@ -138,7 +134,7 @@
       align-items: start;
     }
 
-    /* === COMPONENTS === */
+    /* Common Components */
     .card {
       background: var(--card);
       border-radius: var(--radius);
@@ -146,134 +142,148 @@
       box-shadow: var(--shadow);
       margin-bottom: 20px;
       overflow: hidden;
-      width: 100%;
     }
     
+    /* Buttons */
     .btn {
-      background: var(--accent); color: white;
-      padding: 10px 20px; border-radius: 8px;
-      text-decoration: none; display: inline-flex;
-      align-items: center; justify-content: center;
-      font-weight: 600; font-size: 14px; border: none; cursor: pointer;
+      background: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
     }
+    .btn:hover {background: var(--accent-dark);}
     .btn-sm {padding: 6px 12px; font-size: 12px;}
     .btn-wa {background: #25D366;}
+    .btn-wa:hover {background: #1ebc57;}
 
-    /* Hero */
-    .hero {padding: 16px;}
+    /* Hero Section */
+    .hero {padding: 20px;}
     .main-news img {
-      width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 8px;
+      width: 100%; height: auto;
+      max-height: 400px; object-fit: cover;
+      border-radius: 8px; display: block;
     }
-    .headline {font-size: 24px; font-weight: 800; margin: 16px 0 10px; color: #111; line-height: 1.3;}
+    .headline {font-size: 26px; font-weight: 800; margin: 16px 0 10px; color: #111; line-height: 1.3;}
+    .meta {color: var(--muted); font-size: 13px; display: flex; gap: 10px; margin-bottom: 8px;}
     
-    /* Grid News */
+    /* News Grid */
     .grid-cards {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px; margin-top: 16px;
+      gap: 16px;
+      margin-top: 16px;
     }
     .news-card {
-      background: var(--card); border-radius: var(--radius);
-      box-shadow: var(--shadow); overflow: hidden;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
       display: flex; flex-direction: column;
-      text-decoration: none; color: inherit; height: 100%;
+      text-decoration: none; color: inherit;
+      height: 100%; transition: transform 0.2s;
     }
+    .news-card:hover {transform: translateY(-2px);}
     .news-card img {width: 100%; height: 160px; object-fit: cover;}
-    .news-content {padding: 14px; flex: 1; display: flex; flex-direction: column;}
+    .news-content {padding: 14px; display: flex; flex-direction: column; flex: 1;}
+    .news-title {font-weight: 700; margin: 0 0 8px; font-size: 16px; line-height: 1.4;}
+    .news-date {font-size: 12px; color: var(--muted); margin-top: auto;}
 
     /* Tables */
-    .table-container {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      width: 100%;
-    }
+    .table-container {overflow-x: auto;}
     table {width: 100%; border-collapse: collapse; white-space: nowrap;}
     th, td {padding: 12px 16px; text-align: left; border-bottom: 1px solid #eee;}
-    th {background: #f9fafb; font-weight: 600;}
+    th {background: #f9fafb; font-weight: 600; color: var(--muted);}
 
-    /* Sidebar */
+    /* Event List */
+    .event-list {list-style: none; padding: 0; margin: 0;}
+    .event-item {
+      display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+    }
+    .event-item:last-child {border-bottom: none;}
+    .event-thumb {width: 56px; height: 56px; border-radius: 8px; object-fit: cover; background: #eee;}
+
+    /* Sidebar & Sticky */
     .sidebar {display: flex; flex-direction: column; gap: 16px;}
-    .sticky {position: sticky; top: calc(110px + var(--sat));}
+    .sticky {position: sticky; top: calc(90px + var(--sat));} /* Sticky menyesuaikan safe area */
 
-    /* Topbar (Teks Berjalan / Marquee) */
+    /* Topbar */
     .topbar {
-      background: var(--accent); color: white;
-      padding: 10px 16px; border-radius: 8px; font-size: 13px;
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 20px;
-      overflow: hidden;
-      width: 100%;
+      background: var(--accent);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; font-weight: 500;
     }
-    .breaking-label {
-      font-weight: 800; white-space: nowrap; flex-shrink: 0; z-index: 2;
-      background: var(--accent); padding-right: 8px;
-      box-shadow: 4px 0 8px -2px rgba(0,0,0,0.2);
-    }
-    .ticker-wrap {width: 100%; overflow: hidden; white-space: nowrap; position: relative;}
-    .ticker-move {
-      display: inline-block; white-space: nowrap;
-      padding-left: 100%;
-      animation: ticker 20s linear infinite;
-    }
-    @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-    /* Install Prompt */
+    /* Install Prompt UI */
     #install-prompt {
-      position: fixed; 
-      bottom: calc(20px + env(safe-area-inset-bottom, 0px)); 
+      position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); 
       left: 50%; transform: translateX(-50%);
       background: #1f2937; color: white;
       padding: 12px 20px; border-radius: 50px;
       display: none; align-items: center; gap: 12px;
-      z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      width: 90%; max-width: 400px;
+      z-index: 2000; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      width: 90%; max-width: 380px;
     }
-    
+
     /* Share Button */
     .native-share-btn {
       display: inline-flex; align-items: center; gap: 6px;
       background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;
-      padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;
+      padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px;
+      cursor: pointer;
     }
 
-    /* === RESPONSIVE MOBILE === */
+    /* === MOBILE RESPONSIVE (Max Width 900px) === */
     @media (max-width: 900px){
       .layout {grid-template-columns: 1fr;}
       .sidebar {order: 2;}
+      .hero {padding: 16px;}
+      .container {padding: 16px;}
       
-      /* Container padding */
-      .container {padding-left: 16px; padding-right: 16px;}
-
-      /* Header Mobile Styling */
-      header {
-        /* Tambahan padding bawah untuk scroll area nav */
-        padding-bottom: 0;
-      }
-
+      /* 100% Header Mobile Fix */
       .header-inner {
         flex-direction: column;
         align-items: stretch;
+        /* Padding atas dan bawah yang pas agar tidak terlalu tinggi tapi lega */
+        padding: 10px 16px 0 16px; 
         gap: 12px;
-        padding: 0 16px 0 16px; /* Reset padding */
-      }
-
-      .brand {
-        width: 100%;
-        padding-top: 8px;
       }
       
-      /* Container Navigasi Scroll yang Aman */
+      /* Brand full width */
+      .brand {
+        width: 100%; 
+        padding-bottom: 0;
+      }
+      .logo {width: 38px; height: 38px;}
+      .brand-text h1 {font-size: 17px;}
+
+      /* Navigation Scroll Fix (Full Width 100%) */
       nav {
-        width: calc(100% + 32px); /* Melebar sedikit ke tepi */
-        margin-left: -16px; /* Offset margin */
+        width: auto;
+        /* Teknik Bleed agar scroll mentok ke ujung layar HP */
+        margin-left: -16px;
         margin-right: -16px;
-        padding: 4px 16px 12px 16px; /* Ruang sentuh scroll */
+        padding: 4px 16px 12px 16px; /* Padding bawah untuk area sentuh scroll */
         
         overflow-x: auto;
         white-space: nowrap;
-        justify-content: flex-start;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        scrollbar-width: none; /* Hide scrollbar */
+        
+        /* Memastikan flex item tidak mengecil */
+        justify-content: flex-start;
       }
       nav::-webkit-scrollbar {display: none;}
       
@@ -283,19 +293,21 @@
         padding: 8px 16px;
         border-radius: 20px;
         font-size: 13px;
-        flex-shrink: 0;
+        flex-shrink: 0; /* Jangan biarkan tombol mengecil */
       }
+      nav a.active {border-color: var(--accent);}
       
-      .grid-cards {grid-template-columns: 1fr;}
-      .sticky {position: relative; top: 0;}
+      /* Sticky adjustment for mobile header height */
+      .sticky {top: calc(140px + var(--sat)); z-index: 10;}
+      .headline {font-size: 22px;}
     }
   </style>
 </head>
 <body>
 
+<!-- Header Full Width -->
 <header>
   <div class="header-inner">
-    <!-- Bagian Brand -->
     <a href="#" class="brand">
       <div class="logo">
         <img src="https://i.postimg.cc/43JHzVW8/329314-3ae915ca4c2cedce83b1b12a7addfd9d-22-11-2022-19-45-25.jpg" alt="Logo">
@@ -306,7 +318,6 @@
       </div>
     </a>
     
-    <!-- Navigasi Scroll -->
     <nav>
       <a href="#home" class="active">Home</a>
       <a href="#event">Event</a>
@@ -323,23 +334,19 @@
     
     <!-- MAIN CONTENT -->
     <main>
-      <!-- HOT: Teks Berjalan -->
+      <!-- Breaking News Bar -->
       <div class="topbar">
-        <div class="breaking-label">🔥 HOT:</div>
-        <div class="ticker-wrap">
-          <div class="ticker-move">
-            Induk 3.2 kg Naik di Empang Damai — Lomba Ikan Mas Minggu Depan Sudah Dibuka Pendaftarannya — Simak Tips Jitu Mancing Babon dari Sang Juara!
-          </div>
-        </div>
+        <span>🔥 <strong>HOT:</strong> Induk 3.2 kg Naik di Empang Damai</span>
+        <span style="font-size:11px; opacity:0.9">22 Nov</span>
       </div>
 
-      <!-- Hero Section -->
+      <!-- Hero Article -->
       <section class="hero card" id="home">
         <div class="main-news">
           <img src="https://i.postimg.cc/q71SRqd2/20250530140128-00-06-47-08-Still003.png" alt="Induk di Empang Damai">
           <div style="margin-top:16px">
-            <div style="color:var(--muted);font-size:13px;margin-bottom:8px">
-              Oleh: <strong>rm37</strong> • 22 Nov 2025
+            <div class="meta">
+              <span>Oleh: <strong>rm37</strong></span> • <span>22 Nov 2025</span>
             </div>
             <h2 class="headline">Induk 3,2 Kg Naik di Empang Damai — Lomba Seru & Tangkapan Spektakuler</h2>
             <p style="color:var(--muted); line-height:1.6; margin-bottom: 20px;">
@@ -347,12 +354,13 @@
               Ratusan pemancing berebut spot terbaik demi mendapatkan induk terberat minggu ini.
             </p>
             
-            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:12px;">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
               <button id="native-share" class="native-share-btn">
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8m-4-6l-4-4-4 4m4-4v13"></path></svg>
-                Bagikan
+                Bagikan Berita
               </button>
               
+              <!-- Fallback Share -->
               <div class="share-fallback" style="display:flex; gap:12px;">
                 <a href="#" id="share-wa"><img src="https://i.postimg.cc/gkW6vPX4/4.png" width="28" height="28" alt="WA"></a>
                 <a href="#" id="share-fb"><img src="https://i.postimg.cc/MGTBvbc9/1.png" width="28" height="28" alt="FB"></a>
@@ -362,36 +370,36 @@
         </div>
       </section>
 
-      <!-- Grid News -->
+      <!-- Artikel Grid -->
       <div class="grid-cards">
         <a href="#" class="news-card">
           <img src="https://i.postimg.cc/VkSQ0qKZ/Screenshot-20250810-145241-Facebook.jpg" alt="Teknik">
           <div class="news-content">
-            <h4 style="margin:0 0 8px">Teknik Dasar Mancing Babon</h4>
-            <div style="font-size:12px;color:var(--muted)">20 Nov 2025</div>
+            <h4 class="news-title">Teknik Dasar Mancing Babon — Hasilkan Strike Beruntun</h4>
+            <div class="news-date">20 Nov 2025</div>
           </div>
         </a>
         <a href="#" class="news-card">
           <img src="https://i.postimg.cc/dtVWh4Dh/20250807110229-MTS-00-00-51-24-Still001.png" alt="Juara">
           <div class="news-content">
-            <h4 style="margin:0 0 8px">Lomba Ikan Mas — Rekap & Juara</h4>
-            <div style="font-size:12px;color:var(--muted)">15 Nov 2025</div>
+            <h4 class="news-title">Lomba Ikan Mas — Rekap & Juara Mingguan</h4>
+            <div class="news-date">15 Nov 2025</div>
           </div>
         </a>
         <a href="#" class="news-card">
           <img src="https://i.postimg.cc/hvrzxWtW/20250807110229-MTS-00-00-51-24-Still001.png" alt="Jadwal">
           <div class="news-content">
-            <h4 style="margin:0 0 8px">Jadwal Mingguan Terpopuler</h4>
-            <div style="font-size:12px;color:var(--muted)">10 Nov 2025</div>
+            <h4 class="news-title">Jadwal Mingguan Pemancingan Terpopuler</h4>
+            <div class="news-date">10 Nov 2025</div>
           </div>
         </a>
       </div>
 
-      <!-- Jadwal -->
+      <!-- Jadwal Section -->
       <section id="jadwal" class="card" style="margin-top:24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <h3 style="margin:0; font-size:18px;">📅 Jadwal Mancing</h3>
-          <a href="#" style="color:var(--accent); font-size:13px; font-weight:600; text-decoration:none;">Semua</a>
+          <a href="#" style="color:var(--accent); font-size:13px; font-weight:600; text-decoration:none;">Lihat Semua</a>
         </div>
         <div class="table-container">
           <table>
@@ -405,22 +413,22 @@
         </div>
       </section>
 
-      <!-- Koleksi -->
+      <!-- Koleksi Foto -->
       <section id="koleksi" style="margin-top:24px;">
         <h3 style="font-size:18px; margin-bottom:12px;">📸 Galeri Strike</h3>
         <div class="grid-cards">
-          <div class="card" style="padding:0; height:auto;"><img src="https://i.postimg.cc/VNMnwysh/Whats-App-Image-2025-10-30-at-18-56-32.jpg" style="width:100%; height:200px; object-fit:cover;"></div>
-          <div class="card" style="padding:0; height:auto;"><img src="https://i.postimg.cc/dtVWh4Dh/20250807110229-MTS-00-00-51-24-Still001.png" style="width:100%; height:200px; object-fit:cover;"></div>
+          <div class="card" style="padding:0; height:auto;"><img src="https://i.postimg.cc/VNMnwysh/Whats-App-Image-2025-10-30-at-18-56-32.jpg" style="width:100%; height:200px; object-fit:cover; display:block;"></div>
+          <div class="card" style="padding:0; height:auto;"><img src="https://i.postimg.cc/dtVWh4Dh/20250807110229-MTS-00-00-51-24-Still001.png" style="width:100%; height:200px; object-fit:cover; display:block;"></div>
         </div>
       </section>
 
-      <!-- Tentang Kami -->
+      <!-- Tentang -->
       <section id="tentang" class="card" style="margin-top:24px; text-align:center; padding:40px 16px;">
         <h2 style="margin-top:0;">Tentang Kami</h2>
         <p style="color:var(--muted); max-width:600px; margin:0 auto 20px;">
-          <strong>Republik Mancing</strong> adalah portal media pemancingan terdepan yang memberikan berita akurat dan konten aktual.
+          <strong>Republik Mancing</strong> adalah portal media pemancingan terdepan. Kami hadir untuk memberikan berita akurat, konten aktual, dan hiburan seputar dunia mancing.
         </p>
-        <a href="https://wa.me/6281234567890" class="btn btn-wa">WhatsApp Admin</a>
+        <a href="https://wa.me/6281234567890" class="btn btn-wa">Hubungi via WhatsApp</a>
       </section>
     </main>
 
@@ -428,15 +436,18 @@
     <aside class="sidebar">
       <div class="sticky">
         
+        <!-- Widget Event -->
         <div class="card" id="event">
-          <h4 style="margin:0 0 12px; font-weight:800;">Event Mendatang</h4>
+          <h4 style="margin:0 0 12px; font-weight:800; display:flex; align-items:center; gap:8px;">
+            Event Mendatang
+          </h4>
           <ul class="event-list">
             <li class="event-item">
               <img src="https://i.postimg.cc/vmrWRHV8/Whats-App-Image-2025-10-30-at-18-56-32.jpg" class="event-thumb" alt="Event 1">
               <div>
                 <div style="font-size:13px; font-weight:700;">Lomba Ikan Mas</div>
                 <div style="font-size:12px; color:var(--muted);">28 Nov • Empang Damai</div>
-                <a href="#" class="btn btn-sm btn-wa" style="margin-top:6px; display:inline-block;">Daftar</a>
+                <a href="https://wa.me/628123456789" class="btn btn-sm btn-wa" style="margin-top:6px; display:inline-block;">Daftar</a>
               </div>
             </li>
             <li class="event-item">
@@ -444,17 +455,20 @@
               <div>
                 <div style="font-size:13px; font-weight:700;">Open Day Mini</div>
                 <div style="font-size:12px; color:var(--muted);">5 Des • Kolam Ratu</div>
-                <a href="#" class="btn btn-sm btn-wa" style="margin-top:6px; display:inline-block;">Daftar</a>
+                <a href="https://wa.me/628123456789" class="btn btn-sm btn-wa" style="margin-top:6px; display:inline-block;">Daftar</a>
               </div>
             </li>
           </ul>
         </div>
 
+        <!-- Widget Iklan -->
         <div class="card" style="background:#fafafa; border:2px dashed #e5e7eb; text-align:center;">
           <div style="font-weight:700; color:var(--accent); margin-bottom:8px;">Slot Iklan Tersedia</div>
+          <p style="font-size:12px; color:var(--muted);">Pasang banner produk pancing Anda disini.</p>
           <a href="#" class="btn btn-sm" style="background:#111; color:fff;">Hubungi Admin</a>
         </div>
 
+        <!-- Widget Video -->
         <div class="card" id="channel">
           <h4 style="margin:0 0 12px;">Highlight Video</h4>
           <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#000;">
@@ -462,11 +476,12 @@
           </div>
         </div>
         
+        <!-- Widget Social Media (Termasuk Tiktok) -->
         <div class="card" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-          <a href="https://www.facebook.com/robben.bralink" target="_blank"><img src="https://i.postimg.cc/MGTBvbc9/1.png" width="32" height="32" alt="FB"></a>
-          <a href="https://www.instagram.com/republikmancing37/" target="_blank"><img src="https://i.postimg.cc/6qs4jkMH/2.png" width="32" height="32" alt="IG"></a>
-          <a href="https://www.youtube.com/c/RepublikMancing37" target="_blank"><img src="https://i.postimg.cc/LXZF4wmd/7.png" width="32" height="32" alt="YT"></a>
-          <a href="https://www.tiktok.com/@republikmancing?lang=id-ID" target="_blank"><img src="https://i.postimg.cc/02sJpqMr/3.png" width="32" height="32" alt="TT"></a>
+          <a href="https://www.facebook.com/robben.bralink" target="_blank" title="Facebook"><img src="https://i.postimg.cc/MGTBvbc9/1.png" width="32" height="32" alt="FB"></a>
+          <a href="https://www.instagram.com/republikmancing37/" target="_blank" title="Instagram"><img src="https://i.postimg.cc/6qs4jkMH/2.png" width="32" height="32" alt="IG"></a>
+          <a href="https://www.youtube.com/c/RepublikMancing37" target="_blank" title="YouTube"><img src="https://i.postimg.cc/LXZF4wmd/7.png" width="32" height="32" alt="YT"></a>
+          <a href="https://www.tiktok.com/@republikmancing?lang=id-ID" target="_blank" title="TikTok"><img src="https://i.postimg.cc/02sJpqMr/3.png" width="32" height="32" alt="TT"></a>
         </div>
 
       </div>
@@ -474,21 +489,22 @@
   </div>
 
   <footer style="text-align:center; color:var(--muted); font-size:13px; margin-top:40px;">
-    &copy; 2026 Republik Mancing.
+    &copy; 2026 Republik Mancing. <br>Aplikasi Berita Mancing Terpercaya.
   </footer>
 </div>
 
+<!-- Install Prompt Container -->
 <div id="install-prompt">
   <div style="flex:1">
-    <div style="font-weight:bold; font-size:14px;">Install App</div>
-    <div style="font-size:12px; color:#ccc;">Baca berita offline.</div>
+    <div style="font-weight:bold; font-size:14px;">Install Republik Mancing</div>
+    <div style="font-size:12px; color:#ccc;">Akses cepat & baca offline.</div>
   </div>
   <button id="install-btn" style="background:white; color:#111; border:none; padding:6px 14px; border-radius:4px; font-weight:700; cursor:pointer;">Install</button>
   <button id="close-install" style="background:none; border:none; color:#888; font-size:20px; cursor:pointer;">&times;</button>
 </div>
 
 <script>
-  /* PWA Manifest & Service Worker Setup */
+  // === 1. PWA CONFIGURATION (Safe Mode) ===
   try {
     const manifest = {
       "name": "Republik Mancing",
@@ -502,11 +518,16 @@
         {"src": "https://i.postimg.cc/43JHzVW8/329314-3ae915ca4c2cedce83b1b12a7addfd9d-22-11-2022-19-45-25.jpg", "sizes": "512x512", "type": "image/jpeg"}
       ]
     };
-    const blobManifest = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-    document.getElementById('my-manifest-placeholder').setAttribute('href', URL.createObjectURL(blobManifest));
+    // Create Blob Manifest
+    const stringManifest = JSON.stringify(manifest);
+    const blobManifest = new Blob([stringManifest], {type: 'application/json'});
+    const manifestURL = URL.createObjectURL(blobManifest);
+    document.getElementById('my-manifest-placeholder').setAttribute('href', manifestURL);
 
+    // Register Service Worker if supported
     if ('serviceWorker' in navigator) {
       const swCode = `
+        const CACHE_NAME = 'rm-cache-v1';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -514,40 +535,72 @@
         });
       `;
       const blobSW = new Blob([swCode], {type: 'text/javascript'});
-      navigator.serviceWorker.register(URL.createObjectURL(blobSW)).catch(e => console.log('SW Fail:', e));
+      const swURL = URL.createObjectURL(blobSW);
+      navigator.serviceWorker.register(swURL).catch(e => console.log('SW Fail:', e));
     }
-  } catch (err) {}
+  } catch (err) {
+    console.log("PWA Init failed (Page still works):", err);
+  }
 
-  /* Install Prompt Logic */
+  // === 2. INSTALL PROMPT LOGIC ===
   let deferredPrompt;
   const installPrompt = document.getElementById('install-prompt');
+  
   window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); deferredPrompt = e; installPrompt.style.display = 'flex';
+    e.preventDefault();
+    deferredPrompt = e;
+    installPrompt.style.display = 'flex';
   });
-  document.getElementById('install-btn').addEventListener('click', async () => {
-    if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; installPrompt.style.display = 'none'; }
-  });
-  document.getElementById('close-install').addEventListener('click', () => installPrompt.style.display = 'none');
 
-  /* Share Logic */
+  document.getElementById('install-btn').addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt = null;
+      installPrompt.style.display = 'none';
+    }
+  });
+
+  document.getElementById('close-install').addEventListener('click', () => {
+    installPrompt.style.display = 'none';
+  });
+
+  // === 3. SHARE LOGIC ===
   const shareBtn = document.getElementById('native-share');
   if (navigator.share) {
-    shareBtn.addEventListener('click', () => navigator.share({title: document.title, url: window.location.href}).catch(console.error));
+    shareBtn.addEventListener('click', () => {
+      navigator.share({
+        title: document.title,
+        text: 'Berita Mancing Terbaru!',
+        url: window.location.href,
+      }).catch(console.error);
+    });
+    // Hide fallback icons if native share exists
     document.querySelector('.share-fallback').style.display = 'none';
   } else {
     shareBtn.style.display = 'none';
     const pageUrl = window.location.href;
-    document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${pageUrl}`;
+    document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=Cek%20ini%20${pageUrl}`;
     document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
   }
 
-  /* Scroll Active State */
+  // === 4. ACTIVE MENU HIGHLIGHT ===
   const sections = document.querySelectorAll("section");
   const navLi = document.querySelectorAll("nav a");
+  
   window.addEventListener('scroll', () => {
     let current = "";
-    sections.forEach((section) => { if (scrollY >= section.offsetTop - 200) current = section.getAttribute("id"); });
-    navLi.forEach((a) => { a.classList.remove("active"); if (current && a.getAttribute("href").includes(current)) a.classList.add("active"); });
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop;
+      if (scrollY >= sectionTop - 200) {
+        current = section.getAttribute("id");
+      }
+    });
+    navLi.forEach((a) => {
+      a.classList.remove("active");
+      if (current && a.getAttribute("href").includes(current)) {
+        a.classList.add("active");
+      }
+    });
   });
 </script>
 </body>
