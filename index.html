@@ -2,7 +2,9 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+  <!-- Viewport adjustment for Notch/PWA -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  
   <title>Republik Mancing — Liputan & Event Mancing</title>
   <meta name="description" content="Berita, jadwal, video, dan event seputar dunia mancing — Republik Mancing." />
   <meta name="theme-color" content="#0b6b4f" />
@@ -27,16 +29,27 @@
       --radius: 12px;
       --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      
+      /* Safe Area Variables for PWA */
+      --sat: env(safe-area-inset-top);
+      --sar: env(safe-area-inset-right);
+      --sal: env(safe-area-inset-left);
     }
     
     /* Reset & Base */
     *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-    html {scroll-behavior: smooth;}
-    body{margin:0; background:var(--bg); color:#1f2937; line-height:1.5; min-height: 100vh;}
+    html {scroll-behavior: smooth; overflow-x: hidden;}
+    body{
+      margin:0; 
+      background:var(--bg); 
+      color:#1f2937; 
+      line-height:1.5; 
+      min-height: 100vh;
+      overflow-x: hidden; /* Prevent horizontal scroll */
+    }
     
-    /* === HEADER (Full Width & Sticky) === */
+    /* === HEADER (Fixed 100% Width & Safe Area) === */
     header {
-      background: #ffffff; /* Fallback */
       background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -46,6 +59,11 @@
       border-bottom: 1px solid #e5e7eb;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
       width: 100%;
+      
+      /* PENTING: Padding Top untuk Notch/Status Bar PWA */
+      padding-top: var(--sat); 
+      padding-left: var(--sal);
+      padding-right: var(--sar);
     }
     
     .header-inner {
@@ -56,10 +74,11 @@
       max-width: var(--max);
       margin: 0 auto;
       padding: 12px 16px;
+      width: 100%; /* Ensure fills header */
     }
 
     /* Brand / Logo */
-    .brand{display:flex; align-items:center; gap:12px; text-decoration: none; color: inherit;}
+    .brand{display:flex; align-items:center; gap:12px; text-decoration: none; color: inherit; max-width: 100%;}
     .logo{
       width:40px; height:40px; 
       border-radius:10px; 
@@ -70,7 +89,17 @@
     }
     .logo img {width: 100%; height: 100%; object-fit: cover;}
     
-    .brand-text h1 {font-size: 18px; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.02em;}
+    .brand-text {flex: 1; min-width: 0;} /* Allow shrinking */
+    .brand-text h1 {
+      font-size: 18px; 
+      font-weight: 800; 
+      margin: 0; 
+      line-height: 1.2; 
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .brand-text span {font-size: 11px; color: var(--muted); display: block; font-weight: 500;}
 
     /* Navigasi Desktop */
@@ -83,6 +112,7 @@
       font-weight: 600;
       font-size: 14px;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     nav a:hover {background: #f3f4f6; color: #111;}
     nav a.active {background: var(--accent); color: white;}
@@ -93,6 +123,8 @@
       margin:0 auto;
       padding: 24px 16px;
       padding-bottom: 80px; /* Space footer */
+      padding-left: calc(16px + var(--sal));
+      padding-right: calc(16px + var(--sar));
     }
 
     .layout{
@@ -181,7 +213,7 @@
 
     /* Sidebar & Sticky */
     .sidebar {display: flex; flex-direction: column; gap: 16px;}
-    .sticky {position: sticky; top: 90px;}
+    .sticky {position: sticky; top: calc(90px + var(--sat));} /* Sticky menyesuaikan safe area */
 
     /* Topbar */
     .topbar {
@@ -196,7 +228,8 @@
 
     /* Install Prompt UI */
     #install-prompt {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); 
+      left: 50%; transform: translateX(-50%);
       background: #1f2937; color: white;
       padding: 12px 20px; border-radius: 50px;
       display: none; align-items: center; gap: 12px;
@@ -219,42 +252,54 @@
       .hero {padding: 16px;}
       .container {padding: 16px;}
       
-      /* Header Mobile Optimization */
+      /* 100% Header Mobile Fix */
       .header-inner {
         flex-direction: column;
         align-items: stretch;
-        padding: 10px 16px 0 16px;
-        gap: 10px;
+        /* Padding atas dan bawah yang pas agar tidak terlalu tinggi tapi lega */
+        padding: 10px 16px 0 16px; 
+        gap: 12px;
       }
       
-      .brand {width: 100%; padding-bottom: 2px;}
-      .logo {width: 36px; height: 36px;}
-      .brand-text h1 {font-size: 16px;}
+      /* Brand full width */
+      .brand {
+        width: 100%; 
+        padding-bottom: 0;
+      }
+      .logo {width: 38px; height: 38px;}
+      .brand-text h1 {font-size: 17px;}
 
-      /* Horizontal Scroll Nav */
+      /* Navigation Scroll Fix (Full Width 100%) */
       nav {
-        width: calc(100% + 32px); /* Bleed edges */
+        width: auto;
+        /* Teknik Bleed agar scroll mentok ke ujung layar HP */
         margin-left: -16px;
-        padding: 4px 16px 12px 16px;
+        margin-right: -16px;
+        padding: 4px 16px 12px 16px; /* Padding bawah untuk area sentuh scroll */
+        
         overflow-x: auto;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        scrollbar-width: none; /* Hide scrollbar */
+        
+        /* Memastikan flex item tidak mengecil */
+        justify-content: flex-start;
       }
       nav::-webkit-scrollbar {display: none;}
       
       nav a {
         background: #f9fafb;
         border: 1px solid #e5e7eb;
-        padding: 6px 14px;
+        padding: 8px 16px;
         border-radius: 20px;
         font-size: 13px;
-        flex-shrink: 0;
+        flex-shrink: 0; /* Jangan biarkan tombol mengecil */
       }
       nav a.active {border-color: var(--accent);}
       
-      .sticky {top: 150px; z-index: 10;}
-      .headline {font-size: 20px;}
+      /* Sticky adjustment for mobile header height */
+      .sticky {top: calc(140px + var(--sat)); z-index: 10;}
+      .headline {font-size: 22px;}
     }
   </style>
 </head>
